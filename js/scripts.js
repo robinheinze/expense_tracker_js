@@ -7,8 +7,20 @@ var Contact = {
 var Address = {
   fullAddress: function() {
     return this.street + ", " + this.city + ", " + this.state;
+  },
+  valid: function() {
+    return !((/[^a-zA-Z]/g).test(this.state) || (/[^a-zA-Z]/g).test(this.city) || (/\D/).test(this.street.charAt(0)) || this.street === "" || this.city === "" || this.state === "" );
   }
 };
+
+var PhoneNumber = {
+  fullNumber: function() {
+    return this.areaCode + "-" + this.firstThree + "-" + this.secondFour;
+  },
+  valid: function() {
+    return !((/[^\(\)\-\d\s]/g).test(this.string) || this.string.replace((/\D/g), "").length !== 10);
+  }
+}
 
 
 $(document).ready(function() {
@@ -64,11 +76,30 @@ $(document).ready(function() {
 
     var inputtedPhoneNumber = $("input#new-phone-number").val();
 
-    newContact.phoneNumbers.push(inputtedPhoneNumber);
+    var newPhoneNumber = Object.create(PhoneNumber);
+    newPhoneNumber.string = inputtedPhoneNumber; 
+
+    var scrubbedPhoneNumber = inputtedPhoneNumber.replace(/\D/g, "");
+    newPhoneNumber.areaCode = scrubbedPhoneNumber.slice(0,3);
+    newPhoneNumber.firstThree = scrubbedPhoneNumber.slice(3,6);
+    newPhoneNumber.secondFour = scrubbedPhoneNumber.slice(6,10);
+
+
+    newContact.phoneNumbers.push(newPhoneNumber);
 
     $(".new-phone-number-append").each(function() {
-      var inputtedPhoneNumber = $(this).find("input.new-phone-number").val();
-      newContact.phoneNumbers.push(inputtedPhoneNumber);
+      var inputtedPhoneNumber = $(this).find("input.new-phone-number").val().replace(/\D/g, "");
+
+      var inputtedAreaCode = inputtedPhoneNumber.slice(0,3);
+      var inputtedFirstThree = inputtedPhoneNumber.slice(3,6);
+      var inputtedSecondFour = inputtedPhoneNumber.slice(6,10);
+
+      var newPhoneNumber = Object.create(PhoneNumber);
+      newPhoneNumber.areaCode = inputtedAreaCode;
+      newPhoneNumber.firstThree = inputtedFirstThree;
+      newPhoneNumber.secondFour = inputtedSecondFour;
+
+      newContact.phoneNumbers.push(newPhoneNumber);
     });
 
 
@@ -84,17 +115,22 @@ $(document).ready(function() {
 
       newContact.addresses.push(newAddress);
     });
-
-
-    $("ul#contacts").append("<li><span class='contact'>" + newContact.fullName() + "</span></li>");
-
+    if (!newPhoneNumber.valid() || !newAddress.valid()) {
+      if (!newPhoneNumber.valid()) {
+        alert("Please enter a valid phone number.")
+      } 
+      if (!newAddress.valid()) {
+      alert("Please enter a valid address!")
+      } 
+    } else {
+      $("ul#contacts").append("<li><span class='contact'>" + newContact.fullName() + "</span></li>");
+    }
     $(".contact").last().click(function() {
       $("#show-contact").show();
 
       $("#show-contact h2").text(newContact.fullName());
       $(".first-name").text(newContact.firstName);
       $(".last-name").text(newContact.lastName);
-      $(".phone-number").text(newContact.phoneNumbers[0]);
 
       $("ul#addresses").text("");
       newContact.addresses.forEach(function(address) {
@@ -102,7 +138,7 @@ $(document).ready(function() {
       });
       $("ul#phoneNumbers").text("");
       newContact.phoneNumbers.forEach(function(phoneNumber) {
-        $("ul#phoneNumbers").append("<li>" + phoneNumber + "</li>");
+        $("ul#phoneNumbers").append("<li>" + phoneNumber.fullNumber() + "</li>");
       });
     });
 
