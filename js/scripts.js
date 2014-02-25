@@ -50,7 +50,7 @@ $(document).ready(function() {
                                     '</div>');
   });
 
-    $("form#new-contact").submit(function(event) {
+  $("form#new-contact").submit(function(event) {
     event.preventDefault();
 
     var inputtedFirstName = $("input#new-first-name").val();
@@ -124,28 +124,29 @@ $(document).ready(function() {
       } 
     } else {
       $("ul#contacts").append("<li><span class='contact'>" + newContact.fullName() + "</span></li>");
+    
+      $(".contact").last().click(function() {
+        $("#show-contact").show();
+
+        $("#show-contact h2").text(newContact.fullName());
+        $(".first-name").text(newContact.firstName);
+        $(".last-name").text(newContact.lastName);
+
+        $("ul#addresses").text("");
+        newContact.addresses.forEach(function(address) {
+          $("ul#addresses").append("<li>" + address.fullAddress() + "</li>");
+        });
+        $("ul#phoneNumbers").text("");
+        newContact.phoneNumbers.forEach(function(phoneNumber) {
+          $("ul#phoneNumbers").append("<li>" + phoneNumber.fullNumber() + "</li>");
+        });
+      });
+
+      $(".new-address-append").remove();
+      $(".new-phone-number-append").remove();
+
+      this.reset();
     }
-    $(".contact").last().click(function() {
-      $("#show-contact").show();
-
-      $("#show-contact h2").text(newContact.fullName());
-      $(".first-name").text(newContact.firstName);
-      $(".last-name").text(newContact.lastName);
-
-      $("ul#addresses").text("");
-      newContact.addresses.forEach(function(address) {
-        $("ul#addresses").append("<li>" + address.fullAddress() + "</li>");
-      });
-      $("ul#phoneNumbers").text("");
-      newContact.phoneNumbers.forEach(function(phoneNumber) {
-        $("ul#phoneNumbers").append("<li>" + phoneNumber.fullNumber() + "</li>");
-      });
-    });
-
-    $(".new-address-append").remove();
-    $(".new-phone-number-append").remove();
-
-    this.reset();
   });
 });
 
