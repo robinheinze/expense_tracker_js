@@ -1,10 +1,51 @@
 var Contact = {
-    fullName: function() {
-      return this.firstName + " " + this.lastName;
-    }
+  all: [],
+  create: function(firstName, lastName) {
+    var contact = Object.create(Contact);
+    contact.initialize(firstName, lastName);
+    Contact.all.push(contact);
+    return contact;
+  },
+
+  initialize: function(firstName, lastName) {
+    this.firstName = firstName;
+    this.lastName = lastName;
+    this.addresses = [];
+    this.phoneNumbers = [];
+  },
+
+  fullName: function() {
+    return this.firstName + " " + this.lastName;
+  },
+
+  createAddress: function(street, city, state) {
+    var address = Address.create(street, city, state);
+    this.addresses.push(address);
+    return address;
+  },
+
+  createPhoneNumber: function(string) {
+    var phoneNumber = PhoneNumber.create(string);
+    this.phoneNumbers.push(phoneNumber);
+    return phoneNumber;
+  }
 };
 
 var Address = {
+  all: [],
+  create: function(street, city, state) {
+    var address = Object.create(Address);
+    address.initialize(street, city, state);
+    Address.all.push(address);
+    return address;
+  },
+
+  initialize: function(street, city, state) {
+    this.street = street;
+    this.city = city;
+    this.state = state;
+  },
+
   fullAddress: function() {
     return this.street + ", " + this.city + ", " + this.state;
   },
@@ -14,11 +55,26 @@ var Address = {
 };
 
 var PhoneNumber = {
+  all: [],
+  create: function(string) {
+    var phoneNumber = Object.create(PhoneNumber);
+    phoneNumber.initialize(string);
+    PhoneNumber.all.push(phoneNumber);
+    return phoneNumber;
+  },
+
+  initialize: function(string) {
+    this.string = string;
+    this.areaCode = string.substring(0,3);
+    this.firstThree = string.substring(3,6);
+    this.secondFour = string.substring(6,10);
+  },
+
   fullNumber: function() {
     return this.areaCode + "-" + this.firstThree + "-" + this.secondFour;
   },
   valid: function() {
-    return !((/[^\(\)\-\d\s]/g).test(this.string) || this.string.replace((/\D/g), "").length !== 10);
+    return !((/[^\(\)\-\.\d\s]/g).test(this.string) || this.string.replace((/\D/g), "").length !== 10);
   }
 }
 
@@ -55,51 +111,21 @@ $(document).ready(function() {
 
     var inputtedFirstName = $("input#new-first-name").val();
     var inputtedLastName = $("input#new-last-name").val();
-
-    var newContact = Object.create(Contact);
-    newContact.firstName = inputtedFirstName;
-    newContact.lastName = inputtedLastName;
-
-    newContact.addresses = [];
-    newContact.phoneNumbers = [];
+    var newContact = Contact.create(inputtedFirstName, inputtedLastName);
 
     var inputtedStreet = $("div.new-address input.new-street").val();
     var inputtedCity = $("div.new-address input.new-city").val();
     var inputtedState = $("div.new-address input.new-state").val();
-
-    var newAddress = Object.create(Address);
-    newAddress.street = inputtedStreet;
-    newAddress.city = inputtedCity;
-    newAddress.state = inputtedState;
-
-    newContact.addresses.push(newAddress);
+    var newAddress = newContact.createAddress(inputtedStreet, inputtedCity, inputtedState);
 
     var inputtedPhoneNumber = $("input#new-phone-number").val();
-
-    var newPhoneNumber = Object.create(PhoneNumber);
-    newPhoneNumber.string = inputtedPhoneNumber; 
-
-    var scrubbedPhoneNumber = inputtedPhoneNumber.replace(/\D/g, "");
-    newPhoneNumber.areaCode = scrubbedPhoneNumber.slice(0,3);
-    newPhoneNumber.firstThree = scrubbedPhoneNumber.slice(3,6);
-    newPhoneNumber.secondFour = scrubbedPhoneNumber.slice(6,10);
-
-
-    newContact.phoneNumbers.push(newPhoneNumber);
+    var inputtedPhoneNumberScrubbed = inputtedPhoneNumber.replace(/\D/g, "");
+    var newPhoneNumber = newContact.createPhoneNumber(inputtedPhoneNumberScrubbed);
 
     $(".new-phone-number-append").each(function() {
-      var inputtedPhoneNumber = $(this).find("input.new-phone-number").val().replace(/\D/g, "");
-
-      var inputtedAreaCode = inputtedPhoneNumber.slice(0,3);
-      var inputtedFirstThree = inputtedPhoneNumber.slice(3,6);
-      var inputtedSecondFour = inputtedPhoneNumber.slice(6,10);
-
-      var newPhoneNumber = Object.create(PhoneNumber);
-      newPhoneNumber.areaCode = inputtedAreaCode;
-      newPhoneNumber.firstThree = inputtedFirstThree;
-      newPhoneNumber.secondFour = inputtedSecondFour;
-
-      newContact.phoneNumbers.push(newPhoneNumber);
+      var inputtedPhoneNumber = $(this).find("input.new-phone-number").val();
+      var inputtedPhoneNumberScrubbed = inputtedPhoneNumber.replace(/\D/g, "");
+      var newPhoneNumber = newContact.createPhoneNumber(inputtedPhoneNumberScrubbed);
     });
 
 
@@ -107,19 +133,29 @@ $(document).ready(function() {
       var inputtedStreet = $(this).find("input.new-street").val();
       var inputtedCity = $(this).find("input.new-city").val();
       var inputtedState = $(this).find("input.new-state").val();
-
-      var newAddress = Object.create(Address);
-      newAddress.street = inputtedStreet;
-      newAddress.city = inputtedCity;
-      newAddress.state = inputtedState;
-
-      newContact.addresses.push(newAddress);
+      var newAddress = newContact.createAddress(inputtedStreet, inputtedCity, inputtedState);
     });
-    if (!newPhoneNumber.valid() || !newAddress.valid()) {
-      if (!newPhoneNumber.valid()) {
+
+    var badPhoneNumberExists;
+    newContact.phoneNumbers.forEach(function(phoneNumber) {
+      if (!phoneNumber.valid()) {
+        badPhoneNumberExists = true;
+      }
+    });
+
+    var badAddressExists;
+        newContact.addresses.forEach(function(address) {
+          if (!address.valid()) {
+            badAddressExists = true;
+          }
+        });
+
+
+    if (badPhoneNumberExists || badAddressExists) {
+      if (badPhoneNumberExists) {
         alert("Please enter a valid phone number.")
       } 
-      if (!newAddress.valid()) {
+      if (badAddressExists) {
       alert("Please enter a valid address!")
       } 
     } else {
