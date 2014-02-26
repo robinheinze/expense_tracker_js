@@ -6,11 +6,11 @@
 	display: none;
 }
 
-.clickable {
+.category-clickable {
   cursor: pointer;
   color: #08c;
 }
 
-.contact:hover {
+.category-clickable:hover {
   text-decoration: underline;
 }
