@@ -5,79 +5,51 @@
     <link href="css/styles.css" rel="stylesheet" type="text/css">
     <script src="js/jquery-1.11.0.js"></script>
     <script src="js/scripts.js"></script>
-    <title>Address book</title>
+    <title>Expense Tracker</title>
   </head>
   <body>
     <div class="container">
-      <h1>Address book</h1>
+      <h1>Expense Organizer</h1>
 
       <div class="row">
-        <div class="col-md-6">
-          <h2>Add a contact:</h2>
-          <form id="new-contact">
+        <div class="col-md-4" id="add-category-section">
+          <h2>Categories:</h2>
+          <ul id="all-category-list">
+          </ul>
+          <form id="new-category">
             <div class="form-group">
-              <label for="new-first-name">First name</label>
-              <input type="text" class="form-control" id="new-first-name">
+              <label for="new-category-name">New category:</label>
+              <input id="new-category-name" type="text" class="form-control">
             </div>
-            <div class="form-group">
-              <label for="new-last-name">Last name</label>
-              <input type="text" class="form-control" id="new-last-name">
-            </div>
-
-
-            <div id="new-addresses">
-              <div class="new-address">
-                <div class="form-group">
-                  <label for="new-street">Street</label>
-                  <input type="text" class="form-control new-street">
-                </div>
-                <div class="form-group">
-                  <label for="new-city">City</label>
-                  <input type="text" class="form-control new-city">
-                </div>
-                <div class="form-group">
-                  <label for="new-state">State</label>
-                  <input type="text" class="form-control new-state">
-                </div>
-              </div>
-            </div>
-            <div id="new-phone-numbers">
-              <div class="new-phone-number">
-                <div class="form-group">
-                  <label for="new-phone-number">Phone number</label>
-                  <input type="text" class="form-control" id="new-phone-number">
-                </div>
-              </div>
-            </div>
-
-            <span class="btn btn-primary" id="add-address">Another address</span>
-
-            <span class="btn btn-primary" id="add-phone-number">Another phone number</span>
-
-            <button type="submit" class="btn">Add</button>
+            <button type="submit" class="btn btn-danger">Add Category</button>
           </form>
 
-          <h2>Contacts:</h2>
-          <ul id="contacts">
-
-          </ul>
         </div>
 
-        <div class="col-md-6">
-          <div id="show-contact">
-            <h2></h2>
+        <div class="col-md-4" id = "add-purchase-section">
+          <h2>Add a purchase to <span class="purchase-category"></span>:</h2>
+          <form id="new-purchase">
+            <div class="form-group">
+              <label for="new-purchase-description">Description</label>
+              <input id="new-purchase-description" class='form-control' type="text">
+            </div>
+            <div class = "form-group">
+              <label for="new-purchase-amount">Amount</label>
+              <input id="new-purchase-amount" class="form-control" type="text">
+            </div>
 
-            <p>First name: <span class="first-name"></span></p>
-            <p>Last name: <span class="last-name"></span></p>
-            <p>Phone numbers:</p>
-            <ul id="phoneNumbers">
+            <button type="submit" class="btn btn-danger">Add Purchase</button>
+          </form>
+        </div>
 
-            </ul>
-            <p>Addresses:</p>
-            <ul id="addresses">
-
-            </ul>
-          </div>
+        <div class="col-md-4" id="show-purchases-section">
+          <h2><span class="purchase-category"></span> purchases:</h2>
+          <table class = "table" id="purchases-table">
+            <tr>
+              <th>Purchase</th>
+              <th>Amount</th>
+            </tr>
+          </table>
         </div>
       </div>
     </div>

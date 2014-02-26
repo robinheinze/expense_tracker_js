@@ -1,8 +1,12 @@
-#show-contact {
+#show-purchases-section {
   display: none;
 }
 
-.contact {
+#add-purchase-section {
+	display: none;
+}
+
+.clickable {
   cursor: pointer;
   color: #08c;
 }
