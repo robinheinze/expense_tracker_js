@@ -76,4 +76,27 @@ describe('Category', function() {
       testCategory.purchases.should.eql([testPurchase]);
     });
   });
+
+  describe('totalSpent', function() {
+    it('calculates the total spent in a category', function() {
+      var testCategory = Category.create();
+      var testPurchase1 = testCategory.createPurchase(2, "purchase");
+      var testPurchase2 = testCategory.createPurchase(3, "purchase");
+      testCategory.totalSpent().should.equal(5);
+    });
+  }); 
+
+  describe('totalSpendEverywhere', function() {
+    it('calculates the total spend in all categories', function() {
+      var testCategory = Category.create();
+      var testCategory2 = Category.create();
+      var testPurchase1 = testCategory.createPurchase(2,"purchase");
+      var testPurchase2 = testCategory.createPurchase(3,"purchase");
+      var testPurchase3 = testCategory2.createPurchase(4,"purchase");
+      var testPurchase4 = testCategory2.createPurchase(5,"purchase");
+      testCategory.totalSpendEverywhere().should.equal(14);
+      testCategory2.totalSpendEverywhere().should.equal(14);
+
+    });
+  });
 });

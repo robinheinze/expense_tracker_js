@@ -16,6 +16,22 @@ var Category = {
     var purchase = Purchase.create(amount, description);
     this.purchases.push(purchase);
     return purchase;
+  },
+
+  totalSpent: function() {
+    var sum = 0;
+    this.purchases.forEach(function(purchase) {
+      sum += purchase.amount;
+    });
+    return sum;
+  },
+
+  totalSpendEverywhere: function() {
+    var sum = 0;
+    Category.all.forEach(function(category) {
+      sum += category.totalSpent();
+    });
+    return sum;
   }
 };
 
@@ -42,7 +58,11 @@ $(document).ready(function() {
 
     newCategory = Category.create(inputtedCategory);
 
-    $("ul#all-category-list").append("<li class='category-clickable'>" + newCategory.name + "</li>");
+    $("table#all-category-list").append("<tr class='category-clickable'>" +
+                                            "<td>" + newCategory.name + "</td>" +
+                                            "<td class='" + newCategory.name +"-category-spend'></td>" +
+                                            "<td class='"+ newCategory.name +"-category-percent'></td>" +
+                                          "</tr>");
 
     $(".appended-row").remove();
 
@@ -50,7 +70,7 @@ $(document).ready(function() {
     $("#show-purchases-section").show();
 
     $(".category-clickable").last().click(function() {   
-      currentCategory = Category.all[$(this).index()];
+      currentCategory = Category.all[$(this).index()-1];
 
       $(".appended-row").remove();
       if (currentCategory.purchases.length > 0) {
@@ -68,7 +88,7 @@ $(document).ready(function() {
     event.preventDefault();
 
     inputtedDescription = $("input#new-purchase-description").val();
-    inputtedAmount = parseFloat($("input#new-purchase-amount").val()).toFixed(2);
+    inputtedAmount = parseFloat($("input#new-purchase-amount").val());
 
     newPurchase = currentCategory.createPurchase(inputtedAmount, inputtedDescription);
 
@@ -76,6 +96,14 @@ $(document).ready(function() {
     currentCategory.purchases.forEach(function(purchase) {
         $("#purchases-table").append("<tr class='appended-row'><td>" + purchase.description + "</td><td>" + purchase.amount + "</td></tr>");
     });
+
+    Category.all.forEach(function(category) {
+      var percent = ((category.totalSpent()/category.totalSpendEverywhere())*100).toFixed(0);
+      var total = (category.totalSpent()).toFixed(2);
+      $("."+category.name +"-category-spend").text(total);
+      $("."+category.name +"-category-percent").text(percent+"%");
+    })
+
     this.reset();
   });
 
