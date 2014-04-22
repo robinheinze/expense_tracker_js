@@ -60,8 +60,8 @@ $(document).ready(function() {
 
     $("table#all-category-list").append("<tr class='category-clickable'>" +
                                             "<td>" + newCategory.name + "</td>" +
-                                            "<td class='" + newCategory.name +"-category-spend'></td>" +
-                                            "<td class='"+ newCategory.name +"-category-percent'></td>" +
+                                            "<td class='" + newCategory.name.replace(/\s/g, "-") +"-category-spend'></td>" +
+                                            "<td class='"+ newCategory.name.replace(/\s/g, "-") +"-category-percent'></td>" +
                                           "</tr>");
 
     $(".appended-row").remove();
@@ -100,8 +100,8 @@ $(document).ready(function() {
     Category.all.forEach(function(category) {
       var percent = ((category.totalSpent()/category.totalSpendEverywhere())*100).toFixed(0);
       var total = (category.totalSpent()).toFixed(2);
-      $("."+category.name +"-category-spend").text(total);
-      $("."+category.name +"-category-percent").text(percent+"%");
+      $("."+category.name.replace(/\s/g, "-") +"-category-spend").text(total);
+      $("."+category.name.replace(/\s/g, "-") +"-category-percent").text(percent+"%");
     })
 
     this.reset();
